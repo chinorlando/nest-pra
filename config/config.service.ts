@@ -30,8 +30,8 @@ class ConfigService {
       database: this.getValue('TUTORIAL_DATABASE'),
 
       // entities: ['dist/**/*.entity.js'], 
-      entities: [__dirname + '/**/*.entity{.ts, .js}'],
-      // autoLoadEntities: true,
+      // entities: [__dirname + '/**/*.entity{.ts, .js}'],
+      autoLoadEntities: true,
       synchronize: true, 
     };
   }
