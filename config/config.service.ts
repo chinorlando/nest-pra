@@ -32,7 +32,7 @@ class ConfigService {
       // entities: ['dist/**/*.entity.js'], 
       // entities: [__dirname + '/**/*.entity{.ts, .js}'],
       autoLoadEntities: true,
-      synchronize: true, 
+      synchronize: true,
     };
   }
 }
