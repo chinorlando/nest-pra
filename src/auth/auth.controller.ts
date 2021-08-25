@@ -1,14 +1,17 @@
-import { BadRequestException, Body, Controller, NotFoundException, Post, Query, Req } from '@nestjs/common';
+import { BadRequestException, Body, Controller, NotFoundException, Post, Res} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './models/register.dto';
-
-import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 
 
 @Controller()
 export class AuthController {
-    constructor(private userService: UserService){}
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService
+    ){}
 
 
     @Post('register')
@@ -26,7 +29,11 @@ export class AuthController {
     }
 
     @Post('login')
-    async login(@Body('email') email:string, @Body('password') password:string){
+    async login(
+        @Body('email') email:string, 
+        @Body('password') password:string,
+        @Res({passthrough: true}) response: Response
+    ){
     // async login(@Body() body){
     // async login(@Query('email') email: string, @Query('password') pass: string){
     // async login(@Req() request: Request){
@@ -38,6 +45,9 @@ export class AuthController {
         if (!await bcrypt.compare(password, user.password)) {
             throw new NotFoundException("Contraseña incorrecta");
         }
+
+        const jwt = await this.jwtService.signAsync({id:user.id});
+        response.cookie('jwt', jwt, {httpOnly:true});
 
         return user;
     }
