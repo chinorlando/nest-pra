@@ -18,9 +18,14 @@ export class UserController {
     //     return await this.userService.paginate();
     // }
 
+    // @Get()
+    // async all(@Query('page') page = 1): Promise<User[]>{
+    //     return await this.userService.paginate(page);
+    // }
+
     @Get()
-    async all(@Query('page') page = 1): Promise<User[]>{
-        return await this.userService.paginate(page);
+    async all(@Query('page') page = 1){
+        return await this.userService.paginate(page,['role']);
     }
 
     // manera larga
@@ -50,7 +55,7 @@ export class UserController {
 
     @Get(':id')
     async get(@Param('id') id:number){
-        return this.userService.findOne({id});
+        return this.userService.findOne({id}, ['role']);
     }
 
     // manera larga

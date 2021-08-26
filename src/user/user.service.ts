@@ -1,50 +1,46 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { AbstractService } from 'src/common/abstract.service';
 import { Repository } from 'typeorm';
 import { User } from './models/user.entity';
 
 @Injectable()
-export class UserService {
-    constructor (@InjectRepository(User) private readonly userRepository: Repository<User>){}
-    
-    async all(): Promise<User[]>{
-        return await this.userRepository.find();
+export class UserService extends AbstractService{
+    constructor (@InjectRepository(User) private readonly userRepository: Repository<User>){
+        super(userRepository);
     }
+    
+    // async all(): Promise<User[]>{
+    //     return await this.userRepository.find();
+    // }
 
-    async paginate(page = 1): Promise<any>{
-        const take = 15;
-        const [users, total] = await this.userRepository.findAndCount({
-            take,
-            skip: (page-1)*take,
-        });
+    async paginate(page = 1, relations=[]): Promise<any>{
+        const {data, meta} = await super.paginate(page, relations);
+        
         return {
             // mapeamos cuando no intercepamos y ocultar el campo password
-            data:users.map(user => {
+            data:data.map(user => {
                 const {password, ...data} = user;
                 return data;
             }),
-            meta:{
-                total,
-                page,
-                last_page: Math.ceil(total/take),
-            }
+            meta,
         }
     }
 
-    async create(data): Promise<User>{
+    // async create(data): Promise<User>{
 
-        return await this.userRepository.save(data);
-    }
+    //     return await this.userRepository.save(data);
+    // }
 
-    async findOne(condition): Promise<User>{
-        return await this.userRepository.findOne(condition);
-    }
+    // async findOne(condition): Promise<User>{
+    //     return await this.userRepository.findOne(condition);
+    // }
 
-    async update(id:number, data):Promise<any>{
-        return this.userRepository.update(id, data);
-    }
+    // async update(id:number, data):Promise<any>{
+    //     return this.userRepository.update(id, data);
+    // }
 
-    async delete(condition): Promise<any>{
-        return await this.userRepository.delete(condition);
-    }
+    // async delete(condition): Promise<any>{
+    //     return await this.userRepository.delete(condition);
+    // }
 }
