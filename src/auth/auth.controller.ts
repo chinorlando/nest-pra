@@ -4,9 +4,8 @@ import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './models/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { AuthInterceptor } from './auth.interceptor';
 
-@UseInterceptors(ClassSerializerInterceptor,AuthInterceptor)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController {
     constructor(
@@ -61,5 +60,11 @@ export class AuthController {
         const data = await this.jwtService.verifyAsync(cookie);
         console.log(data);
         return this.userService.findOne({id: data['id']});
+    }
+
+    @Post('logout')
+    async logout(@Res({passthrough: true}) response: Response){
+        response.clearCookie('jwt');
+        return {message: 'Success'};
     }
 }
