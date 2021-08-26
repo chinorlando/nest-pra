@@ -32,12 +32,11 @@ export class RoleService {
     // }
 
     async create(data): Promise<Role>{
-
         return await this.roleRepository.save(data);
     }
 
     async findOne(condition): Promise<Role>{
-        return await this.roleRepository.findOne(condition);
+        return await this.roleRepository.findOne(condition, {relations: ['permissions']} );
     }
 
     async update(id:number, data):Promise<any>{
