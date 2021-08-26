@@ -32,7 +32,7 @@ export class AuthController {
     async login(
         @Body('email') email:string, 
         @Body('password') password:string,
-        @Res({passthrough: true}) response: Response
+        @Res() response: Response
     ){
     // async login(@Body() body){
     // async login(@Query('email') email: string, @Query('password') pass: string){

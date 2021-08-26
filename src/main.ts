@@ -9,6 +9,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe());
   app.use(cookieParser());
+  app.enableCors({
+    origin: 'http://localhost:4200', // puerto diferente segun tecnologia de uso de frontend
+    credentials: true,
+  });
   
   await app.listen(3000);
 }
