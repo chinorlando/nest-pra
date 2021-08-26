@@ -1,4 +1,4 @@
-import { ValidationPipe } from "@nestjs/common";
+import { Exclude } from "class-transformer";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
@@ -16,6 +16,7 @@ export class User {
   email: string;
 
   @Column({type: 'varchar', nullable: false})
+  @Exclude()
   password: string;
 
   @Column({ default: true })
