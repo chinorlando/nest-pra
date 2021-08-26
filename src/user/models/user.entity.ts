@@ -1,5 +1,6 @@
 import { Exclude } from "class-transformer";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Role } from "src/role/role.entity";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity('users')
 export class User {
@@ -21,5 +22,10 @@ export class User {
 
   @Column({ default: true })
   isActive: boolean;
+
+  @ManyToOne(() => Role)
+  // @Joinolumn{name: role_id}
+  @JoinColumn({name: 'role_id'})
+  role: Role
 
 }
