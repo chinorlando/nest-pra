@@ -11,6 +11,26 @@ export class UserService {
         return await this.userRepository.find();
     }
 
+    async paginate(page = 1): Promise<any>{
+        const take = 15;
+        const [users, total] = await this.userRepository.findAndCount({
+            take,
+            skip: (page-1)*take,
+        });
+        return {
+            // mapeamos cuando no intercepamos y ocultar el campo password
+            data:users.map(user => {
+                const {password, ...data} = user;
+                return data;
+            }),
+            meta:{
+                total,
+                page,
+                last_page: Math.ceil(total/take),
+            }
+        }
+    }
+
     async create(data): Promise<User>{
 
         return await this.userRepository.save(data);
