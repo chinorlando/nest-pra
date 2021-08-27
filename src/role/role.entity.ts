@@ -9,7 +9,9 @@ export class Role{
     @Column()
     name: string;
 
-    @ManyToMany(()=> Permission, {cascade: true})
+    @ManyToMany(
+        ()=> Permission, {cascade: true}
+    )
     @JoinTable({
         name: 'role_permissions',
         joinColumn: {name: 'role_id', referencedColumnName: 'id'},
