@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AbstractService } from 'src/common/abstract.service';
-import { Repository } from 'typeorm';
+import { User } from 'src/user/models/user.entity';
+import { createQueryBuilder, Repository } from 'typeorm';
 import { Order } from './order.entity';
 
 @Injectable()
@@ -29,4 +30,11 @@ export class OrderService extends AbstractService {
         }
     }
 
+    async chart(){
+        return await this.orderRepository.query(`
+            select to_char(o.created_at ,'YYYY-MM-DD') as data, sum(i.price*i.quantity) as sum from orders o 
+            join order_items i on i.order_id = o.id 
+            group by data
+        `);
+    }
 }

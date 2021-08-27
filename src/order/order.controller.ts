@@ -53,4 +53,9 @@ export class OrderController {
         return res.send(csv);
     }
 
+    @Get('chart')
+    async chart(){
+        return this.orderService.chart();
+    }
+
 }
