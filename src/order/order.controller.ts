@@ -1,6 +1,10 @@
-import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Put, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Delete, Get, Param, Post, Put, Query, Res, UseGuards, UseInterceptors } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { OrderItem } from './order-item.entity';
+import { Order } from './order.entity';
 import { OrderService } from './order.service';
+import { Parser } from 'json2csv';
+import { Response } from 'express';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -14,27 +18,39 @@ export class OrderController {
         return await this.orderService.paginate(page,['order_items']);
     }
 
-    // @Post()
-    // async create(@Body() body: ProductCreateDto){
-    //     return this.orderService.create(body);
-    // }
+    @Post('export')
+    async export(@Res() res: Response){
+        const parser = new Parser({
+            fields: ['ID','Name','Email','Product Title','Price','Quantity'],
+        });
+        const orders = this.orderService.all(['order_items']);
+        const json=[];
 
-    // @Get(':id')
-    // async get(@Param('id') id:number){
-    //     return await this.orderService.findOne({id});
-    // }
+        (await orders).forEach((o: Order)=>{
+            json.push({
+                ID: o.id,
+                Name: o.name,
+                Email: o.email,
+                'Product Title': '',
+                Price: '',
+                Quantity: '',
+            });
+            o.order_items.forEach((i: OrderItem)=>{
+                json.push({
+                    ID: '',
+                    Name: '',
+                    Email: '',
+                    'Product Title': i.product_title,
+                    Price: i.price,
+                    Quantity: i.quantity,
+                });
+            });
+        });
 
-    // @Put(':id')
-    // async update(
-    //     @Param('id') id:number,
-    //     @Body() body: ProductUpdateDto,
-    // ){
-    //     await this.orderService.update(id, body);
-    //     return this.orderService.findOne({id});
-    // }
+        const csv = parser.parse(json);
+        res.header('Content-Type', 'Text/csv');
+        res.attachment('orders.csv');
+        return res.send(csv);
+    }
 
-    // @Delete(':id')
-    // async delete(@Param('id') id:number){
-    //     return this.orderService.delete(id);
-    // }
 }
