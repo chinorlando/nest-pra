@@ -5,6 +5,7 @@ import { Order } from './order.entity';
 import { OrderService } from './order.service';
 import { Parser } from 'json2csv';
 import { Response } from 'express';
+import { HasPermission } from 'src/permission/has-permission.decorator';
 
 @UseInterceptors(ClassSerializerInterceptor)
 @UseGuards(AuthGuard)
@@ -12,7 +13,9 @@ import { Response } from 'express';
 export class OrderController {
     constructor(private orderService: OrderService){}
 
+
     @Get()
+    @HasPermission('orders')
     async all(@Query('page') page=1){
         // return await this.orderService.all(['order_items']);
         return await this.orderService.paginate(page,['order_items']);
